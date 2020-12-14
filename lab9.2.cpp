@@ -17,7 +17,6 @@ struct Student {
     int mark_math;
     int mark_phys;
     int mark_inf;
-    double average;
 };
 
 void Create(Student*& p, int& N);
@@ -26,7 +25,7 @@ void Print_I(int* ip, const int N);
 void Sort(Student* p, const int N);
 int* Sort_I(Student* p, const int N);
 int BinSearch(Student* p, const int N, const string prizv, const int kurs, const double average);
-void Calculate_Average_Mark(Student* p, const int N);
+double Average_Mark(Student student);
 
 int main() {
     // забезпечення відображення кирилиці:
@@ -48,7 +47,6 @@ int main() {
         if (action == 0) break;
         if (action == 1) {
             Create(p, N);
-            Calculate_Average_Mark(p, N);
             Print(p, N);
         }
         if (action == 2) {
@@ -144,7 +142,7 @@ void Print(Student* p, const int N) {
         cout << "| " << setw(6) << right << p[i].mark_phys << " ";
         cout << "| " << setw(10) << right << p[i].mark_math << " ";
         cout << "| " << setw(11) << right << p[i].mark_inf << " ";
-        cout << "| " << setw(12) << right << p[i].average << " ";
+        cout << "| " << setw(12) << right << Average_Mark(p[i]) << " ";
         cout << "|" << endl;
     }
     cout << "==========================================================================================================" << endl;
@@ -171,10 +169,12 @@ void Sort(Student* p, const int N) {
     Student tmp_student;
     for (int upper = N - 2; upper >= 0; upper--) {
         for (int k = 0; k <= upper; k++) {
+            double average_k = Average_Mark(p[k]);
+            double average_k_1 = Average_Mark(p[k + 1]);
             if (
-                (p[k].average < p[k + 1].average) ||
-                ((p[k].average == p[k + 1].average) && (p[k].kurs > p[k + 1].kurs)) ||
-                ((p[k].average == p[k + 1].average) && (p[k].kurs == p[k + 1].kurs) && (p[k].prizv < p[k + 1].prizv))
+                (average_k < average_k_1) ||
+                ((average_k == average_k_1) && (p[k].kurs > p[k + 1].kurs)) ||
+                ((average_k == average_k_1) && (p[k].kurs == p[k + 1].kurs) && (p[k].prizv < p[k + 1].prizv))
             ) {
                 tmp_student = p[k];
                 p[k] = p[k + 1];
@@ -196,10 +196,12 @@ int* Sort_I(Student* p, const int N) {
     int tmp_ip;
     for (int upper = N - 2; upper >= 0; upper--) {
         for (int k = 0; k <= upper; k++) {
+            double average_k = Average_Mark(p[ip[k]]);
+            double average_k_1 = Average_Mark(p[ip[k + 1]]);
             if (
-                (p[ip[k]].average < p[ip[k + 1]].average) ||
-                ((p[ip[k]].average == p[ip[k + 1]].average) && (p[ip[k]].kurs > p[ip[k + 1]].kurs)) ||
-                ((p[ip[k]].average == p[ip[k + 1]].average) && (p[ip[k]].kurs == p[ip[k + 1]].kurs) && (p[ip[k]].prizv > p[ip[k + 1]].prizv))
+                (average_k < average_k_1) ||
+                ((average_k == average_k_1) && (p[ip[k]].kurs > p[ip[k + 1]].kurs)) ||
+                ((average_k == average_k_1) && (p[ip[k]].kurs == p[ip[k + 1]].kurs) && (p[ip[k]].prizv > p[ip[k + 1]].prizv))
                 ) {
                 tmp_ip = ip[k];
                 ip[k] = ip[k + 1];
@@ -215,12 +217,14 @@ int BinSearch (Student* p, const int N, const string prizv, const int kurs, cons
     int L=0, R=N-1, m;
     do {
         m = (L+R)/2;
-        if ( p[m].prizv == prizv && p[m].kurs == kurs && p[m].average == average)
-        return m;
+        double average_m = Average_Mark(p[m]);
+        if (p[m].prizv == prizv && p[m].kurs == kurs && average_m == average) {
+            return m;
+        }
         if (
-            (p[m].average < average) ||
-            ((p[m].average == average) && (p[m].kurs > kurs)) ||
-            ((p[m].average == average) && (p[m].kurs == kurs) && (p[m].prizv < prizv))
+            (average_m < average) ||
+            ((average_m == average) && (p[m].kurs > kurs)) ||
+            ((average_m == average) && (p[m].kurs == kurs) && (p[m].prizv < prizv))
         ) {
             R = m - 1; 
         }
@@ -232,8 +236,7 @@ int BinSearch (Student* p, const int N, const string prizv, const int kurs, cons
     return -1;
 }
 
-void Calculate_Average_Mark(Student* p, const int N) {
-    for (int i = 0; i < N; i++) {
-        p[i].average = round((p[i].mark_phys + p[i].mark_math + p[i].mark_inf) / 3.*100)/100.;
-    }
+double Average_Mark(Student student) {
+    return round((student.mark_phys + student.mark_math + student.mark_inf) / 3.*100)/100.;
 }
+
