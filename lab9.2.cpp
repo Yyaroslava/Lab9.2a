@@ -21,7 +21,7 @@ struct Student {
 
 void Create(Student*& p, int& N);
 void Print(Student* p, const int N);
-void Print_I(int* ip, const int N);
+void Print_I(Student* p, const int N, int* ip);
 void Sort(Student* p, const int N);
 int* Sort_I(Student* p, const int N);
 int BinSearch(Student* p, const int N, const string prizv, const int kurs, const double average);
@@ -63,7 +63,8 @@ int main() {
                 continue;
             }
             int* ip = Sort_I(p, N);
-            Print_I(ip, N);
+            Print_I(p, N, ip);
+            Print(p, N);
         }
         if (action == 4) {
             if (N == 0) {
@@ -149,11 +150,23 @@ void Print(Student* p, const int N) {
     cout << endl;
 }
 
-void Print_I(int* ip, const int N) {
-    cout << "Індекс: ";
+void Print_I(Student* p, const int N, int* ip) {
+    cout << "==========================================================================================================" << endl;
+    cout << "| № |   Прізвище   |  Курс  |      Спеціальність      | Фізика | Математика | Інформатика | Середній бал |" << endl;
+    cout << "----------------------------------------------------------------------------------------------------------" << endl;
+
     for (int i = 0; i < N; i++) {
-        cout << ip[i] << " ";
+        cout << "| " << i + 1 << " ";
+        cout << "| " << setw(12) << left << p[ip[i]].prizv << " ";
+        cout << "|    " << p[ip[i]].kurs << "   ";
+        cout << "| " << setw(23) << left << spesialnistStr[p[ip[i]].spesialnist] << " ";
+        cout << "| " << setw(6) << right << p[ip[i]].mark_phys << " ";
+        cout << "| " << setw(10) << right << p[ip[i]].mark_math << " ";
+        cout << "| " << setw(11) << right << p[ip[i]].mark_inf << " ";
+        cout << "| " << setw(12) << right << Average_Mark(p[ip[i]]) << " ";
+        cout << "|" << endl;
     }
+    cout << "==========================================================================================================" << endl;
     cout << endl;
 }
 
@@ -239,4 +252,3 @@ int BinSearch (Student* p, const int N, const string prizv, const int kurs, cons
 double Average_Mark(Student student) {
     return round((student.mark_phys + student.mark_math + student.mark_inf) / 3.*100)/100.;
 }
-
